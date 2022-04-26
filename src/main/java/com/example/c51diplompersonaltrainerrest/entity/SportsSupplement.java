@@ -21,4 +21,9 @@ public class SportsSupplement {
 
     @Size(min = 3, max = 50)
     private String name;
+
+    @Size(min = 3)
+    private String description;
+
+
 }

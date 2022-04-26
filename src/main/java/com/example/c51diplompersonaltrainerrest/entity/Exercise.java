@@ -25,7 +25,7 @@ public class Exercise {
     @Size(min = 3)
     private String description;
 
+    private long numberOfApproaches;
 
-
-
+    private long numberOfTimes;
 }
