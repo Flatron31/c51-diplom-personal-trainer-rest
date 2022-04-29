@@ -21,6 +21,15 @@ public class Role {
     @Size(min = 3, max = 50)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private List<User> users;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }
