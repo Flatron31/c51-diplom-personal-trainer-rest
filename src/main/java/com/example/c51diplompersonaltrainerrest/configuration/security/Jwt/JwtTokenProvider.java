@@ -1,10 +1,10 @@
 package com.example.c51diplompersonaltrainerrest.configuration.security.Jwt;
 
-
 import com.example.c51diplompersonaltrainerrest.entity.Role;
 import com.example.c51diplompersonaltrainerrest.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,11 +30,8 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expired}")
     private long jwtExpirationInMs;
 
+    @Autowired
     private UserDetailsService userDetailsService;
-
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -72,7 +69,7 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;

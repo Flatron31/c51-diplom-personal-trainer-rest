@@ -5,7 +5,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 
 public class JwtUser implements UserDetails {
     private final Long id;
@@ -17,28 +16,39 @@ public class JwtUser implements UserDetails {
     private final boolean enabled;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUser(
-            Long id,
-            String username,
-            String firstName,
-            String lastName,
-            String email,
-            String password, Collection<? extends GrantedAuthority> authorities,
-            boolean enabled
-    ) {
+    public JwtUser(Long id,
+                   String username,
+                   String firstName,
+                   String lastName,
+                   String password,
+                   String email,
+                   boolean enabled,
+                   Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.password = password;
-        this.authorities = authorities;
+        this.email = email;
         this.enabled = enabled;
+        this.authorities = authorities;
     }
 
     @JsonIgnore
     public Long getId() {
         return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -64,17 +74,6 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
-    public String getFirstname() {
-        return firstName;
-    }
-
-    public String getLastname() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 
     @JsonIgnore
     @Override

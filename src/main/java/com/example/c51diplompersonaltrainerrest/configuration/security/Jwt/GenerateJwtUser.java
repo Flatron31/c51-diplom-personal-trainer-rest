@@ -16,12 +16,12 @@ public class GenerateJwtUser {
         return new JwtUser(
                 user.getId(),
                 user.getUsername(),
-                user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getPassword(),
                 user.getEmail(),
-                mapToGrantedAuthorities(new ArrayList<>(user.getRoleList())),
-                user.getStatus().equals(Status.ACTIVE)
+                user.getStatus().equals(Status.ACTIVE),
+                mapToGrantedAuthorities(new ArrayList<>(user.getRoleList()))
         );
     }
 
