@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @Data
@@ -25,7 +26,9 @@ public class Exercise {
     @Size(min = 3)
     private String description;
 
+    @Min(value = 1)
     private long numberOfApproaches;
 
+    @Min(value = 1)
     private long numberOfTimes;
 }

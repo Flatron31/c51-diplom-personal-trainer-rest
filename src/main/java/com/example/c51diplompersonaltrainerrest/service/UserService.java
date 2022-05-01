@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -35,9 +36,8 @@ public class UserService {
     }
 
     public User findByUsername(String username) {
-        User byUsername = userRepository.findByUsername(username).get();
-
-        //        .orElseThrow(() -> new RuntimeException("User with username: " + username + " not found"));
+        User byUsername = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User with username: " + username + " not found"));
         return byUsername;
     }
 
