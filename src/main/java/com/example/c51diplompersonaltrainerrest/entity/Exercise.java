@@ -30,7 +30,6 @@ public class Exercise {
     @Min(value = 1)
     private long numberOfTimes;
 
-
-    @ManyToMany
-    private List<Program> listPrograms;
+    @ManyToMany(mappedBy = "programs")
+    private List<Program> programList;
 }

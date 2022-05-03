@@ -26,4 +26,7 @@ public class SportsSupplement {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "sportsSupplement_id")
     private List<Shop> shopList;
+
+    @ManyToMany(mappedBy = "training")
+    private List<Program> programList;
 }
