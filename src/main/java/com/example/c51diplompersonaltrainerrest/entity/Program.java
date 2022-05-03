@@ -17,12 +17,14 @@ public class Program {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
     @ManyToMany ///( надо сделать ДТО для использования в контроллере)
     private List<Exercise> exerciseList;
 
     @ManyToMany ///( надо сделать ДТО для использования в контроллере)
     private List<SportsSupplement> sportsSupplements;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
 
 
