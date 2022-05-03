@@ -27,10 +27,10 @@ public class Program {
 
     ///( надо сделать ДТО для использования в контроллере)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "PROGRAM_SPORTSSUPPLEMET",
+    @JoinTable(name = "PROGRAM_SPORTSNUTRITION",
             joinColumns = @JoinColumn(name = "PROGRAM_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SPORTSSUPPLEMET_ID"))
-    private List<SportsSupplement> sportsSupplements;
+            inverseJoinColumns = @JoinColumn(name = "SPORTSNUTRITION_ID"))
+    private List<SportsNutrition> sportsNutritionList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
