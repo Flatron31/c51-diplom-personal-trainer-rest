@@ -17,13 +17,12 @@ public class Program {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    ///( надо сделать ДТО для использования в контроллере)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "programList")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programList",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Exercise> exerciseList;
 
-
-    ///( надо сделать ДТО для использования в контроллере)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<SportsNutrition> sportsNutritionList;
 
     @ManyToOne(fetch = FetchType.LAZY)
