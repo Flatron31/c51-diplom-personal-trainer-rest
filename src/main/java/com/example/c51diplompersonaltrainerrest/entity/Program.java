@@ -18,18 +18,12 @@ public class Program {
     private long id;
 
     ///( надо сделать ДТО для использования в контроллере)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "PROGRAM_EXERCISE",
-            joinColumns = @JoinColumn(name = "PROGRAM_ID"),
-            inverseJoinColumns = @JoinColumn(name = "EXERCISE_ID"))
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "programList")
     private List<Exercise> exerciseList;
 
 
     ///( надо сделать ДТО для использования в контроллере)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "PROGRAM_SPORTSNUTRITION",
-            joinColumns = @JoinColumn(name = "PROGRAM_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SPORTSNUTRITION_ID"))
     private List<SportsNutrition> sportsNutritionList;
 
     @ManyToOne(fetch = FetchType.LAZY)

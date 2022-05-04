@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "SPORTNUTRITIONS")
 public class SportsNutrition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,7 @@ public class SportsNutrition {
     @JoinColumn(name = "sportsSupplement_id")
     private List<Shop> shopList;
 
-    @ManyToMany(mappedBy = "training")
+    @ManyToMany(mappedBy = "sportsNutritionList")
     private List<Program> programList;
 
     @Enumerated(EnumType.STRING)

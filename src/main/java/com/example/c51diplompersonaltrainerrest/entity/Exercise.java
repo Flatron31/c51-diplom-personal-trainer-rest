@@ -1,6 +1,7 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "EXERCISES")
+@Builder
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +33,6 @@ public class Exercise {
     @Min(value = 1)
     private long numberOfTimes;
 
-    @ManyToMany(mappedBy = "programs")
+    @ManyToMany
     private List<Program> programList;
 }
