@@ -6,7 +6,6 @@ import com.example.c51diplompersonaltrainerrest.entity.Exercise;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ExerciseRepository;
-import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@Api(tags = "Exercise", description = "Access to posts")
-@RequestMapping("/api/user/exercise")
+@Api(tags = "Exercise", description = "Operations with the exercise object")
+@RequestMapping(name = "/api/user/exercise")
 public class ExerciseController {
 
     @Autowired
