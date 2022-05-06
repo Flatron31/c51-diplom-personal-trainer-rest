@@ -1,16 +1,19 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "SHOPS")
 public class Shop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +23,13 @@ public class Shop {
     private String name;
 
     @Size(min = 3, max = 20)
-    private String City;
+    private String city;
 
     @Size(min = 3, max = 30)
     private String address;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private SportsNutrition sportsNutrition;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "shopList")
+    @JsonIgnore
+    private List<SportsNutrition> sportsNutritionList;
 
 }
