@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper(componentModel = "spring")
 public interface SportsNutritionMapper {
-    SportsNutritionDTO SportsNutritionDTOToSportsNutrition(SportsNutrition sportsNutrition);
+    SportsNutritionDTO SportsNutritionToSportsNutritionDTO(SportsNutrition sportsNutrition);
     SportsNutrition SportsNutritionDTOToSportsNutrition(SportsNutritionDTO sportsNutritionDTO);
 }
