@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper(componentModel = "spring")
 public interface ExerciseMapper {
-    ExerciseDTO exerciseDTOToExercise(Exercise exercise);
+    ExerciseDTO exerciseToExerciseDTO(Exercise exercise);
     Exercise exerciseDTOToExercise(ExerciseDTO exerciseDto);
 }
