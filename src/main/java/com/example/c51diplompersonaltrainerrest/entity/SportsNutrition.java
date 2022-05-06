@@ -24,11 +24,10 @@ public class SportsNutrition {
     @Size(min = 3)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sportsSupplement_id")
+    @ManyToMany (fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Shop> shopList;
 
-    @ManyToMany(mappedBy = "sportsNutritionList")
+    @ManyToMany()
     private List<Program> programList;
 
     @Enumerated(EnumType.STRING)
