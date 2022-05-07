@@ -1,5 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class User {
     @Size(min = 3, max = 50)
     private String lastName;
 
+    @JsonIgnore
     private String password;
 
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
@@ -52,9 +54,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Mission mission;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
     private List<Role> roleList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Program> programList;
+
 }
