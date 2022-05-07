@@ -3,7 +3,9 @@ package com.example.c51diplompersonaltrainerrest.controller;
 import com.example.c51diplompersonaltrainerrest.Mapper.ShopMapper;
 import com.example.c51diplompersonaltrainerrest.dto.ShopDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Shop;
+import com.example.c51diplompersonaltrainerrest.entity.SportsNutrition;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
+import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ShopRepository;
 import com.example.c51diplompersonaltrainerrest.repository.SportsNutritionRepository;
 import io.swagger.annotations.Api;
@@ -51,7 +53,6 @@ public class ShopController {
         return ResponseEntity.ok(saveShop);
     }
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "Not found")
@@ -65,7 +66,23 @@ public class ShopController {
         return ResponseEntity.ok(shopList);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Getting a store object by id", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<Shop> getShop(@ApiParam(value = "This id is required to get the store object " +
+            "under the given id", example = "1")
+                                        @PathVariable("id") Long id) {
+        if (id < 0 | shopRepository.findById(id).isEmpty()) {
+            throw new NotFoundException();
+        }
+        Shop shop = shopRepository.getById(id);
 
+        return ResponseEntity.ok(shop);
+    }
 
 
 }
