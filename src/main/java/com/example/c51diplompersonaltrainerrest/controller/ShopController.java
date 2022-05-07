@@ -84,5 +84,26 @@ public class ShopController {
         return ResponseEntity.ok(shop);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Getting a store object by id", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public void deleteShop(@ApiParam(value = "This id is required to get the store object " +
+            "under the given id", example = "1")
+                               @PathVariable("id") Long id) {
+        if (id < 0 | shopRepository.findById(id).isEmpty()) {
+            throw new NotFoundException();
+        }
+        Shop shop = shopRepository.getById(id);
+        shopRepository.delete(shop);
+    }
+
+
+
+
+
 
 }
