@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -36,13 +37,13 @@ public class User {
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private String email;
 
-    //@Min(value = 1)
+    @Min(value = 1)
     private long age;
 
-    //@Min(value = 1)
+    @Min(value = 1)
     private long weight;
 
-    //@Min(value = 1)
+    @Min(value = 1)
     private long growth;
 
     @Enumerated(EnumType.STRING)
@@ -56,5 +57,4 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Program> programList;
-
 }
