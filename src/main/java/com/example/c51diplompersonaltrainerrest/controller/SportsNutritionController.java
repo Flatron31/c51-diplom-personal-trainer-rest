@@ -1,11 +1,13 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
 import com.example.c51diplompersonaltrainerrest.Mapper.SportsNutritionMapper;
+import com.example.c51diplompersonaltrainerrest.dto.ListShopsDTO;
 import com.example.c51diplompersonaltrainerrest.dto.SportsNutritionDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Shop;
 import com.example.c51diplompersonaltrainerrest.entity.SportsNutrition;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
+import com.example.c51diplompersonaltrainerrest.repository.ShopRepository;
 import com.example.c51diplompersonaltrainerrest.repository.SportsNutritionRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,10 +29,14 @@ public class SportsNutritionController {
 
     private SportsNutritionRepository sportsNutritionRepository;
     private SportsNutritionMapper sportsNutritionMapper;
+    private ShopRepository shopRepository;
 
-    public SportsNutritionController(SportsNutritionRepository sportsNutritionRepository, SportsNutritionMapper sportsNutritionMapper) {
+    public SportsNutritionController(SportsNutritionRepository sportsNutritionRepository,
+                                     SportsNutritionMapper sportsNutritionMapper,
+                                     ShopRepository shopRepository) {
         this.sportsNutritionRepository = sportsNutritionRepository;
         this.sportsNutritionMapper = sportsNutritionMapper;
+        this.shopRepository = shopRepository;
     }
 
     @ApiResponse(responseCode = "200", description = "Successful operation")
@@ -50,7 +56,6 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
     }
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "Not found")
@@ -67,10 +72,9 @@ public class SportsNutritionController {
         sportsNutritionRepository.delete(sportsNutritionRepository.getById(id));
     }
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "404", description = "Exercise not found"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
     @ApiOperation(value = "Change in the object of sports nutrition",
@@ -99,16 +103,15 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutritionRepository.save(updateSportsNutrition));
     }
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "404", description = "User not found")
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Obtaining a sports nutrition object by ID")
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<SportsNutrition> getSportsNutrition(@ApiParam(value = "The identifier is required to obtain a " +
             "sports nutrition object by this identifier", example = "1")
-                                                              @PathVariable("{id}") Long id) {
+                                                              @PathVariable("id") Long id) {
         if (id < 0 | sportsNutritionRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
         }
@@ -117,5 +120,36 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutrition);
     }
 
+    @ApiResponse(responseCode = "200", description = "Successful operation")
+    @ApiResponse(responseCode = "405", description = "Invalid input")
+    @ApiOperation(value = "Adding stores to a sports nutrition facility", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @PostMapping("/{id}")
+    public ResponseEntity<SportsNutrition> addingStoreToProduct(@ApiParam(value = "The identifier is required to obtain " +
+            "a sports nutrition" +
+            " object by this identifier", example = "1")
+                                                                @PathVariable("id") Long id,
+                                                                @ApiParam(value = "List of ID stores", example = "[1,2]")
+                                                                @RequestBody ListShopsDTO listShopsDTO) {
+        if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
+            throw new InvalidParametrException();
+        }
+        List<Long> idShops = listShopsDTO.getIdShops();
 
+        for (Long idShop : idShops) {
+            if (idShop < 1 | shopRepository.findById(idShop).isEmpty()) {
+                throw new InvalidParametrException();
+            }
+        }
+        SportsNutrition sportsNutrition = sportsNutritionRepository.getById(id);
+        List<Shop> shopList = sportsNutrition.getShopList();
+
+        for (Long idShop : idShops) {
+            Shop shop = shopRepository.getById(idShop);
+            shopList.add(shop);
+        }
+        sportsNutrition.setShopList(shopList);
+
+        return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
+    }
 }
