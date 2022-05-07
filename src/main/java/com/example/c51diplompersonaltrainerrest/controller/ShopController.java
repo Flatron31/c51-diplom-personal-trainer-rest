@@ -88,12 +88,12 @@ public class ShopController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @ApiOperation(value = "Getting a store object by id", notes = "This can only be done by the logged in user",
-            authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Getting a store object by id",
+            notes = "This can only be done by the logged in user", authorizations = {@Authorization(value = "apiKey")})
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public void deleteShop(@ApiParam(value = "This id is required to get the store object " +
             "under the given id", example = "1")
-                               @PathVariable("id") Long id) {
+                           @PathVariable("id") Long id) {
         if (id < 0 | shopRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
         }
@@ -101,9 +101,36 @@ public class ShopController {
         shopRepository.delete(shop);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+    })
+    @ApiOperation(value = "Modify the shop object",
+            notes = "This can only be done by the logged in user", authorizations = {@Authorization(value = "apiKey")})
+    @PutMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<Shop> updateShop(@ApiParam(value = "id is required to get the store object by this id for " +
+            "subsequent changes", example = "1")
+                                           @PathVariable("id") Long id,
+                                           @ApiParam(value = "Modified shop object",
+                                                   name = "body shop")
+                                           @Valid @RequestBody ShopDTO shopDTO,
+                                           BindingResult bindingResult) {
+        if (id < 1 | shopRepository.findById(id).isEmpty()) {
+            throw new NotFoundException();
+        }
+        if (bindingResult.hasErrors()) {
+            throw new InvalidParametrException();
+        }
+        Shop shop = shopRepository.getById(id);
+        List<SportsNutrition> sportsNutritionList = shop.getSportsNutritionList();
 
+        Shop updateShop = shopMapper.shopDTOToShop(shopDTO);
+        updateShop.setId(shop.getId());
+        updateShop.setSportsNutritionList(sportsNutritionList);
 
-
+        return ResponseEntity.ok(shopRepository.save(updateShop));
+    }
 
 
 }
