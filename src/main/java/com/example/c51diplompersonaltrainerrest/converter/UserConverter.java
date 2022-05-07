@@ -16,10 +16,14 @@ public class UserConverter {
     public static User convertToUserFromUserSignupDTO(UserDTO userDTO) {
         return User.builder()
                 .username(userDTO.getUsername())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .firstName(userDTO.getFirstName())
                 .lastName(userDTO.getLastName())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .email(userDTO.getEmail())
+                .age(userDTO.getAge())
+                .weight(userDTO.getWeight())
+                .growth(userDTO.getGrowth())
+                .mission(userDTO.getMission())
                 .build();
     }
 }
