@@ -1,6 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
-import com.example.c51diplompersonaltrainerrest.Mapper.UserMapper;
+import com.example.c51diplompersonaltrainerrest.mapper.UserMapper;
 import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Program;
 import com.example.c51diplompersonaltrainerrest.entity.Role;

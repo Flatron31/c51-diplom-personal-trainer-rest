@@ -1,6 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
-import com.example.c51diplompersonaltrainerrest.Mapper.SportsNutritionMapper;
+import com.example.c51diplompersonaltrainerrest.mapper.SportsNutritionMapper;
 import com.example.c51diplompersonaltrainerrest.dto.ListShopsDTO;
 import com.example.c51diplompersonaltrainerrest.dto.SportsNutritionDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Shop;

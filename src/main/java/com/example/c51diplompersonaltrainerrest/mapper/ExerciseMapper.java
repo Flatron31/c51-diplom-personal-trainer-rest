@@ -1,4 +1,4 @@
-package com.example.c51diplompersonaltrainerrest.Mapper;
+package com.example.c51diplompersonaltrainerrest.mapper;
 
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;

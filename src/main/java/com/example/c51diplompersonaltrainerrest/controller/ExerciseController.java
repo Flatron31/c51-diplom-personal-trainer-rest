@@ -1,7 +1,7 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
-import com.example.c51diplompersonaltrainerrest.Mapper.ExerciseMapper;
+import com.example.c51diplompersonaltrainerrest.mapper.ExerciseMapper;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
