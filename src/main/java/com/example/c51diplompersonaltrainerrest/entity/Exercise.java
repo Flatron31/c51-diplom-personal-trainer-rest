@@ -1,5 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Exercise {
     @Min(value = 1)
     private long numberOfTimes;
 
+    @JsonIgnore
     @ManyToMany
     private List<Program> programList;
 }
