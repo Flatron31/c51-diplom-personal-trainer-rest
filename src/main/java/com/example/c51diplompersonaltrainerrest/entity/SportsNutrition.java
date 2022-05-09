@@ -1,5 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,9 @@ public class SportsNutrition {
     @ManyToMany (fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Shop> shopList;
 
-    @ManyToMany()
-    private List<Program> programList;
+    @JsonIgnore
+    @ManyToMany
+    private List<Program> listProgram;
 
     @Enumerated(EnumType.STRING)
     private SportsSupplement sportsSupplement;
