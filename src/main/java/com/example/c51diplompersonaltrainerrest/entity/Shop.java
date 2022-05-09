@@ -28,8 +28,8 @@ public class Shop {
     @Size(min = 3, max = 30)
     private String address;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "shopList")
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "shopList")
     private List<SportsNutrition> sportsNutritionList;
 
 }
