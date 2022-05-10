@@ -42,7 +42,6 @@ public class UserController {
     @GetMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<User> get(@ApiParam(value = "The name that needs to be fetched", example = "username")
                                     @PathVariable("username") String username) {
-
         if (username == null | userRepository.findByUsername(username).isEmpty()) {
             throw new InvalidParametrException();
         }
@@ -61,7 +60,7 @@ public class UserController {
     @PutMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<User> updateUser(@ApiParam(value = "The name that needs to be fetched", example = "test1")
                                            @PathVariable("username") String username,
-                                           @ApiParam(value = "Modified user object", name = "body userDTO")
+                                           @ApiParam(value = "Modified user object", example = "userDTO")
                                            @Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (username == null | userRepository.findByUsername(username).isEmpty()) {
             throw new NotFoundException();
@@ -73,9 +72,9 @@ public class UserController {
         List<Role> roleList = user.getRoleList();
         List<Program> programList = user.getProgramList();
 
-
         User updateUser = userMapper.userDTOToUser(userDTO);
         updateUser.setId(user.getId());
+        updateUser.setUsername(username);
         updateUser.setRoleList(roleList);
         updateUser.setProgramList(programList);
         updateUser.setStatus(user.getStatus());
