@@ -21,7 +21,7 @@ public class Exercise {
     private long id;
 
     @Size(min = 3, max = 50)
-    private String username;
+    private String name;
 
     @Size(min = 3)
     private String description;
