@@ -27,8 +27,7 @@ public class ProgramService {
         Program program = new Program();
 
         if (user.getMission().equals(Mission.FORCE)) {
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplementAndSportsSupplementAndSportsSupplement(SPECIAL_DRUGS,
-                        GEINER, CREATINE);
+            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(SPECIAL_DRUGS);
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
@@ -40,8 +39,7 @@ public class ProgramService {
 
         else if (user.getMission().equals(Mission.LOSE_WEIGHT)){
 
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplementAndSportsSupplementAndSportsSupplement(FAT_BURNERS,
-                    PROTEIN, AMINO_ACIDS);
+            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(FAT_BURNERS);
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
@@ -52,8 +50,7 @@ public class ProgramService {
         }
 
         else if (user.getMission().equals(Mission.RELIEF)){
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplementAndSportsSupplementAndSportsSupplement(PROTEIN,
-                    AMINO_ACIDS, SPECIAL_DRUGS);
+            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
