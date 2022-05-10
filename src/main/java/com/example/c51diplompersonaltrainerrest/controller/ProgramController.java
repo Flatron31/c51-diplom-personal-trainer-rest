@@ -13,11 +13,13 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @Api(tags = "Program", description = "Operations with the program object")
 @RequestMapping("/api/user/program")
@@ -58,6 +60,9 @@ public class ProgramController {
         user.setProgramList(programList);
 
         Program save = programRepository.save(program);
+
+        log.info("New program added {}", user.getUsername());
+        log.error("New program not added");
 
         return ResponseEntity.ok(save);
     }

@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @Api(tags = "Shop", description = "Store object operations")
 @RequestMapping("/api/user/shop")
@@ -49,6 +51,9 @@ public class ShopController {
         }
         Shop shop = shopMapper.shopDTOToShop(shopDTO);
         Shop saveShop = shopRepository.save(shop);
+
+        log.info("New shop {} added", shopDTO.getName());
+        log.error("New exercise not added");
 
         return ResponseEntity.ok(saveShop);
     }

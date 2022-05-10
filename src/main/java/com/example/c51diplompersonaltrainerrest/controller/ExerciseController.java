@@ -12,12 +12,14 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @Api(tags = "Exercise", description = "Operations with the exercise object")
 @RequestMapping("/api/user/exercise")
@@ -42,6 +44,9 @@ public class ExerciseController {
             throw new InvalidParametrException();
         }
         Exercise exercise = exerciseMapper.exerciseDTOToExercise(exerciseDTO);
+
+        log.info("New exercise {} added", exerciseDTO.getName());
+        log.error("New exercise not added");
 
         return ResponseEntity.ok(exerciseRepository.save(exercise));
     }

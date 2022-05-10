@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @Api(tags = "Sports Nutrition", description = "Operations with the sports nutrition object")
 @RequestMapping("/api/user/sports-nutrition")
@@ -52,6 +54,9 @@ public class SportsNutritionController {
             throw new InvalidParametrException();
         }
         SportsNutrition sportsNutrition = sportsNutritionMapper.SportsNutritionDTOToSportsNutrition(sportsNutritionDTO);
+
+        log.info("New sportsNutrition {} added", sportsNutritionDTO.getName());
+        log.error("New sportsNutrition not added");
 
         return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
     }

@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @Api(tags = "User", description = "Operations with the user")
 @RequestMapping("/api/user")
@@ -78,6 +80,10 @@ public class UserController {
         updateUser.setRoleList(roleList);
         updateUser.setProgramList(programList);
         updateUser.setStatus(user.getStatus());
+
+        log.info("User {} changed successfully", username);
+        log.warn("Warning");
+        log.error("Error", new Throwable());
 
         return ResponseEntity.ok(userRepository.save(updateUser));
     }

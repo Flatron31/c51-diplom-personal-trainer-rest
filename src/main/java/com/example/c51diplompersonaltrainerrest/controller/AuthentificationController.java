@@ -5,6 +5,7 @@ import com.example.c51diplompersonaltrainerrest.dto.AuthRequestDTO;
 import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
 import com.example.c51diplompersonaltrainerrest.entity.User;
 import com.example.c51diplompersonaltrainerrest.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthentificationController {
@@ -34,7 +36,7 @@ public class AuthentificationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<Object, Object>> logIn(@RequestBody AuthRequestDTO requestDto){
+    public ResponseEntity<Map<Object, Object>> logIn(@RequestBody AuthRequestDTO requestDto) {
 
         String username = requestDto.getUsername();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
@@ -46,15 +48,21 @@ public class AuthentificationController {
         resp.put("username", username);
         resp.put("token", token);
 
+        log.info("Authorized {}", username);
+        log.error("{} not authorized", username);
+
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @PostMapping("/reg")
-    public ResponseEntity<UserDTO> registration(@RequestBody UserDTO userDTO){
-        if (service.existByUsername(userDTO.getUsername()) || service.existByEmail(userDTO.getEmail())){
+    public ResponseEntity<UserDTO> registration(@RequestBody UserDTO userDTO) {
+        if (service.existByUsername(userDTO.getUsername()) || service.existByEmail(userDTO.getEmail())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         service.registration(userDTO);
+
+        log.info("Registered successfully {}", userDTO.getUsername());
+        log.error("{} not registered", userDTO.getUsername());
 
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
@@ -70,6 +78,7 @@ public class AuthentificationController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
+        log.info("Logout");
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }
