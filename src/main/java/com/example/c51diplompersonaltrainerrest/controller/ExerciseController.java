@@ -36,7 +36,7 @@ public class ExerciseController {
     @ApiOperation(value = "Creating a new exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", name = "body exercise")
+    public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", example = "exerciseDTO")
                                                    @Valid @RequestBody ExerciseDTO exerciseDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidParametrException();
@@ -91,7 +91,7 @@ public class ExerciseController {
             "for this id for subsequent changes", example = "1")
                                                   @PathVariable("id") Long id,
                                                   @ApiParam(value = "Creating a modified Exercise object",
-                                                          name = "body exercise")
+                                                          example = "exercise")
                                                   @Valid @RequestBody Exercise exercise, BindingResult bindingResult) {
         if (id < 1 | exerciseRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
