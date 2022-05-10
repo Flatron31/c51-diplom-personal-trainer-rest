@@ -45,7 +45,7 @@ public class SportsNutritionController {
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
     public ResponseEntity<SportsNutrition> createSportsNutrition(@ApiParam(value = "New sports nutrition facility",
-            name = "body sports nutrition")
+            example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -84,7 +84,7 @@ public class SportsNutritionController {
             "obtain a sports nutrition object by this identifier for subsequent changes", example = "1")
                                                                  @PathVariable("id") Long id,
                                                                  @ApiParam(value = "Changing the object of sports nutrition",
-                                                                         name = "body sports nutrition")
+                                                                         example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
         if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
