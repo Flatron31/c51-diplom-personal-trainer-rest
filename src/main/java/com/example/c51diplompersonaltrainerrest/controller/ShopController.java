@@ -42,7 +42,7 @@ public class ShopController {
     @ApiOperation(value = "Creating a new shop", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", name = "body shop")
+    public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidParametrException();
@@ -113,7 +113,7 @@ public class ShopController {
             "subsequent changes", example = "1")
                                            @PathVariable("id") Long id,
                                            @ApiParam(value = "Modified shop object",
-                                                   name = "body shop")
+                                                   example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO,
                                            BindingResult bindingResult) {
         if (id < 1 | shopRepository.findById(id).isEmpty()) {
