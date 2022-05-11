@@ -39,8 +39,11 @@ public class ShopController {
         this.shopMapper = shopMapper;
     }
 
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "405", description = "Invalid input")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+    })
     @ApiOperation(value = "Creating a new shop", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
@@ -60,6 +63,7 @@ public class ShopController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Getting all stores with id", notes = "This can only be done by the logged in user",
@@ -73,6 +77,7 @@ public class ShopController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Getting a store object by id", notes = "This can only be done by the logged in user",
@@ -91,6 +96,7 @@ public class ShopController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Getting a store object by id",
@@ -108,6 +114,7 @@ public class ShopController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
@@ -136,6 +143,5 @@ public class ShopController {
 
         return ResponseEntity.ok(shopRepository.save(updateShop));
     }
-
 
 }
