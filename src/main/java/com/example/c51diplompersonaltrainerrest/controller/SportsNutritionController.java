@@ -51,12 +51,12 @@ public class SportsNutritionController {
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            log.error("New sportsNutrition not added");
             throw new InvalidParametrException();
         }
         SportsNutrition sportsNutrition = sportsNutritionMapper.SportsNutritionDTOToSportsNutrition(sportsNutritionDTO);
 
         log.info("New sportsNutrition {} added", sportsNutritionDTO.getName());
-        log.error("New sportsNutrition not added");
 
         return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
     }
@@ -112,7 +112,8 @@ public class SportsNutritionController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @ApiOperation(value = "Obtaining a sports nutrition object by ID")
+    @ApiOperation(value = "Obtaining a sports nutrition object by ID",
+            notes = "This can only be done by the logged in user", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<SportsNutrition> getSportsNutrition(@ApiParam(value = "The identifier is required to obtain a " +
             "sports nutrition object by this identifier", example = "1")
