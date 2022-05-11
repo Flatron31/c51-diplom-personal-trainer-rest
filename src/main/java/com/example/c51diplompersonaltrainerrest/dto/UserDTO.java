@@ -9,6 +9,7 @@ import lombok.NonNull;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -20,7 +21,7 @@ public class UserDTO {
     @Size(min = 3, max = 50)
     private String username;
 
-    @NonNull
+    @NotNull
     private String password;
 
     @Size(min = 3, max = 50)
@@ -41,7 +42,7 @@ public class UserDTO {
     @Min(value = 1)
     private long growth;
 
-    @NonNull
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Mission mission;
 }
