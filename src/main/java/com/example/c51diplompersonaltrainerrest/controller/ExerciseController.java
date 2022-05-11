@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -41,12 +42,12 @@ public class ExerciseController {
     public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", example = "exerciseDTO")
                                                    @Valid @RequestBody ExerciseDTO exerciseDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            log.info("New exercise not added");
             throw new InvalidParametrException();
         }
         Exercise exercise = exerciseMapper.exerciseDTOToExercise(exerciseDTO);
 
         log.info("New exercise {} added", exerciseDTO.getName());
-        log.error("New exercise not added");
 
         return ResponseEntity.ok(exerciseRepository.save(exercise));
     }
@@ -67,7 +68,6 @@ public class ExerciseController {
 
         return ResponseEntity.ok(exercise);
     }
-
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -107,6 +107,18 @@ public class ExerciseController {
         exercise.setId(id);
 
         return ResponseEntity.ok(exerciseRepository.save(exercise));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+    })
+    @ApiOperation(value = "Getting all exercise objects", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<Exercise>> getAllExercises() {
+        List<Exercise> exerciseList = exerciseRepository.findAll();
+
+        return ResponseEntity.ok(exerciseList);
     }
 }
 
