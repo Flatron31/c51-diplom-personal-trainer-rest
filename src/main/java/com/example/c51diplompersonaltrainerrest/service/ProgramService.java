@@ -27,7 +27,11 @@ public class ProgramService {
         Program program = new Program();
 
         if (user.getMission().equals(Mission.FORCE)) {
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(SPECIAL_DRUGS);
+            if (user.getAge() < 18L) {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
+            } else {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(SPECIAL_DRUGS);
+            }
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
@@ -38,8 +42,11 @@ public class ProgramService {
         }
 
         else if (user.getMission().equals(Mission.LOSE_WEIGHT)){
-
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(FAT_BURNERS);
+            if (user.getAge() < 18L) {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
+            } else {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(FAT_BURNERS);
+            }
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
@@ -50,7 +57,11 @@ public class ProgramService {
         }
 
         else if (user.getMission().equals(Mission.RELIEF)){
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
+            if (user.getAge() < 18L) {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
+            } else {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(AMINO_ACIDS);
+            }
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
@@ -61,8 +72,12 @@ public class ProgramService {
         }
 
         else if (user.getMission().equals(Mission.WEIGHT_GAIN)){
-            sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplementAndSportsSupplementAndSportsSupplement(SPECIAL_DRUGS,
-                    CREATINE, GEINER);
+            if (user.getAge() < 18L) {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplement(PROTEIN);
+            } else {
+                sportsNutritionList = sportsNutritionRepository.findAllBySportsSupplementAndSportsSupplementAndSportsSupplement(SPECIAL_DRUGS,
+                        CREATINE, GEINER);
+            }
             exerciseList = exerciseRepository.findAll();
 
             program.setExerciseList(exerciseList);
