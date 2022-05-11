@@ -1,10 +1,7 @@
 package com.example.c51diplompersonaltrainerrest.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -51,6 +48,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @NonNull
     @Enumerated(EnumType.STRING)
     private Mission mission;
 
