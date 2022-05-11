@@ -4,7 +4,6 @@ import com.example.c51diplompersonaltrainerrest.entity.Mission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

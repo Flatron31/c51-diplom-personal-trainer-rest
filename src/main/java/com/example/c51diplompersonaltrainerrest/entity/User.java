@@ -49,7 +49,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Mission mission;
 
