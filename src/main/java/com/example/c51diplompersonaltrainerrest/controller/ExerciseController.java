@@ -34,13 +34,17 @@ public class ExerciseController {
         this.exerciseMapper = exerciseMapper;
     }
 
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "405", description = "Invalid input")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+    })
     @ApiOperation(value = "Creating a new exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
     public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", example = "exerciseDTO")
-                                                   @Valid @RequestBody ExerciseDTO exerciseDTO, BindingResult bindingResult) {
+                                                   @Valid @RequestBody ExerciseDTO exerciseDTO,
+                                                   BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             log.info("New exercise not added");
             throw new InvalidParametrException();
@@ -54,6 +58,7 @@ public class ExerciseController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @ApiOperation(value = "Getting exercise by id", notes = "This can only be done by the logged in user",
@@ -72,6 +77,7 @@ public class ExerciseController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Removal exercise", notes = "This can only be done by the logged in user",
@@ -87,7 +93,8 @@ public class ExerciseController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "404", description = "Exercise not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
     @ApiOperation(value = "Updated exercise", notes = "This can only be done by the logged in user",
@@ -112,6 +119,7 @@ public class ExerciseController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @ApiOperation(value = "Getting all exercise objects", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
