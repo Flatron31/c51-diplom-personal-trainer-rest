@@ -1,5 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
+import com.example.c51diplompersonaltrainerrest.entity.Status;
 import com.example.c51diplompersonaltrainerrest.mapper.UserMapper;
 import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Program;
@@ -38,6 +39,7 @@ public class UserController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @ApiOperation(value = "Get user by username", authorizations = {@Authorization(value = "apiKey")})
@@ -54,6 +56,7 @@ public class UserController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
@@ -67,7 +70,7 @@ public class UserController {
         if (username == null | userRepository.findByUsername(username).isEmpty()) {
             throw new NotFoundException();
         }
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             throw new InvalidParametrException();
         }
         User user = userRepository.findByUsername(username).get();
@@ -82,11 +85,29 @@ public class UserController {
         updateUser.setStatus(user.getStatus());
 
         log.info("User {} changed successfully", username);
-        log.warn("Warning");
-        log.error("Error", new Throwable());
 
         return ResponseEntity.ok(userRepository.save(updateUser));
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Deleting a user", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}")
+    public void deleteUser(@ApiParam(value = "This ID is required to search for a user under this ID", example = "1")
+                              @PathVariable("id") long id) {
+        if (id < 1 | userRepository.findById(id).isEmpty()) {
+            throw new NotFoundException();
+        }
+        User user = userRepository.getById(id);
+        user.setStatus(Status.DELETED);
+        userRepository.save(user);
+    }
+
+
 
 
 }
