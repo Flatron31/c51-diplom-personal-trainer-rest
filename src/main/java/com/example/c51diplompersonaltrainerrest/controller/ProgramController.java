@@ -42,6 +42,7 @@ public class ProgramController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Creating a program for the user under the given id",
@@ -51,6 +52,7 @@ public class ProgramController {
             "a user under this id", example = "1")
                                                         @PathVariable("id") long id) {
         if (id < 1 | userRepository.findById(id).isEmpty()) {
+            log.error("New program not added");
             throw new NotFoundException();
         }
         User user = userRepository.getById(id);
@@ -62,19 +64,19 @@ public class ProgramController {
         Program save = programRepository.save(program);
 
         log.info("New program added {}", user.getUsername());
-        log.error("New program not added");
 
         return ResponseEntity.ok(save);
     }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Getting all user programs by id", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<List<Program>> getAllProgramUser(@ApiParam(value = "This id is required to search for " +
-            "a user under this id", example = "1")
+    public ResponseEntity<List<Program>> getAllProgramUser(@ApiParam(value = "This ID is required to search for" +
+            " a user under this ID", example = "1")
                                                            @PathVariable("id") long id) {
         if (id < 1 | userRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
@@ -83,5 +85,23 @@ public class ProgramController {
         List<Program> allProgramsUser = programRepository.findAllByUser(user);
 
         return ResponseEntity.ok(allProgramsUser);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Deleting a program object", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}")
+    public void deleteProgram(@ApiParam(value = "This id is required to search for " +
+            "a user under this id", example = "1")
+                              @PathVariable("id") long id) {
+        if (id < 1 | programRepository.findById(id).isEmpty()) {
+            throw new NotFoundException();
+        }
+        Program program = programRepository.getById(id);
+        programRepository.delete(program);
     }
 }
