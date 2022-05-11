@@ -47,13 +47,13 @@ public class ShopController {
     public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            log.info("New exercise not added");
             throw new InvalidParametrException();
         }
         Shop shop = shopMapper.shopDTOToShop(shopDTO);
         Shop saveShop = shopRepository.save(shop);
 
         log.info("New shop {} added", shopDTO.getName());
-        log.error("New exercise not added");
 
         return ResponseEntity.ok(saveShop);
     }
@@ -64,7 +64,7 @@ public class ShopController {
     })
     @ApiOperation(value = "Getting all stores with id", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
-    @GetMapping(value = "", produces = "application/json")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<Shop>> getAllShops() {
         List<Shop> shopList = shopRepository.findAll();
 
