@@ -4,6 +4,7 @@ import com.example.c51diplompersonaltrainerrest.entity.Mission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +20,7 @@ public class UserDTO {
     @Size(min = 3, max = 50)
     private String username;
 
+    @NonNull
     private String password;
 
     @Size(min = 3, max = 50)
@@ -39,6 +41,7 @@ public class UserDTO {
     @Min(value = 1)
     private long growth;
 
+    @NonNull
     @Enumerated(EnumType.STRING)
     private Mission mission;
 }
