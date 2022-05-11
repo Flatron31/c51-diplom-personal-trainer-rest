@@ -56,7 +56,8 @@ public class ExerciseController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @ApiOperation(value = "Getting exercise by id")
+    @ApiOperation(value = "Getting exercise by id", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Exercise> getExercise(@ApiParam(value = "This id is required to get the exercise under the given id",
             example = "1")
