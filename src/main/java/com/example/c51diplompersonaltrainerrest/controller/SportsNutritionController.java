@@ -41,8 +41,11 @@ public class SportsNutritionController {
         this.shopRepository = shopRepository;
     }
 
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "405", description = "Invalid input")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+    })
     @ApiOperation(value = "Creation of a new sports nutrition facility", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
@@ -63,6 +66,7 @@ public class SportsNutritionController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Removal of sports nutrition", notes = "This can only be done by the logged in user",
@@ -79,6 +83,7 @@ public class SportsNutritionController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
@@ -110,6 +115,7 @@ public class SportsNutritionController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @ApiOperation(value = "Obtaining a sports nutrition object by ID",
@@ -126,8 +132,11 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutrition);
     }
 
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "405", description = "Invalid input")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+    })
     @ApiOperation(value = "Adding stores to a sports nutrition facility", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping("/{id}")
