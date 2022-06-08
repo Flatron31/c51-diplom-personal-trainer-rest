@@ -3,9 +3,9 @@ package com.example.c51diplompersonaltrainerrest.controller;
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
 import com.example.c51diplompersonaltrainerrest.mapper.ExerciseMapper;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;
-import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ExerciseRepository;
+import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,12 +26,16 @@ import java.util.List;
 @RequestMapping("/api/user/exercise")
 public class ExerciseController {
 
-    private ExerciseRepository exerciseRepository;
-    private ExerciseMapper exerciseMapper;
+    private final ExerciseRepository exerciseRepository;
+    private final ExerciseMapper exerciseMapper;
+    private final Validator validator;
 
-    public ExerciseController(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper) {
+    public ExerciseController(ExerciseRepository exerciseRepository,
+                              ExerciseMapper exerciseMapper,
+                              Validator validator) {
         this.exerciseRepository = exerciseRepository;
         this.exerciseMapper = exerciseMapper;
+        this.validator = validator;
     }
 
     @ApiResponses(value = {
@@ -45,10 +49,12 @@ public class ExerciseController {
     public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", example = "exerciseDTO")
                                                    @Valid @RequestBody ExerciseDTO exerciseDTO,
                                                    BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.info("New exercise not added");
-            throw new InvalidParametrException();
-        }
+//        if (bindingResult.hasErrors()) {
+//            log.info("New exercise not added");
+//            throw new InvalidParametrException();
+//        }
+        validator.validate(bindingResult);
+
         Exercise exercise = exerciseMapper.exerciseDTOToExercise(exerciseDTO);
 
         log.info("New exercise {} added", exerciseDTO.getName());
@@ -109,9 +115,8 @@ public class ExerciseController {
         if (id < 1 | exerciseRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
         }
-        if (bindingResult.hasErrors()) {
-            throw new InvalidParametrException();
-        }
+        validator.validate(bindingResult);
+
         exercise.setId(id);
 
         return ResponseEntity.ok(exerciseRepository.save(exercise));
