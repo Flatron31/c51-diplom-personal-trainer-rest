@@ -9,6 +9,7 @@ import com.example.c51diplompersonaltrainerrest.entity.User;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
+import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,12 +30,16 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private UserRepository userRepository;
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final Validator validator;
 
-    public UserController(UserRepository userRepository, UserMapper userMapper) {
+    public UserController(UserRepository userRepository,
+                          UserMapper userMapper,
+                          Validator validator) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.validator = validator;
     }
 
     @ApiResponses(value = {
@@ -70,9 +75,8 @@ public class UserController {
         if (username == null | userRepository.findByUsername(username).isEmpty()) {
             throw new NotFoundException();
         }
-        if (bindingResult.hasErrors()) {
-            throw new InvalidParametrException();
-        }
+        validator.validate(bindingResult);
+
         User user = userRepository.findByUsername(username).get();
         List<Role> roleList = user.getRoleList();
         List<Program> programList = user.getProgramList();
