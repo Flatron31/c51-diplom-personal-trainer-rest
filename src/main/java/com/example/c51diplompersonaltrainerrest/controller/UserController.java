@@ -6,9 +6,8 @@ import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Program;
 import com.example.c51diplompersonaltrainerrest.entity.Role;
 import com.example.c51diplompersonaltrainerrest.entity.User;
-import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
-import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
+import com.example.c51diplompersonaltrainerrest.service.UserService;
 import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,13 +32,16 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final Validator validator;
+    private final UserService userService;
 
     public UserController(UserRepository userRepository,
                           UserMapper userMapper,
-                          Validator validator) {
+                          Validator validator,
+                          UserService userService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.validator = validator;
+        this.userService = userService;
     }
 
     @ApiResponses(value = {
@@ -49,14 +51,11 @@ public class UserController {
     })
     @ApiOperation(value = "Get user by username", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<User> get(@ApiParam(value = "The name that needs to be fetched", example = "username")
-                                    @PathVariable("username") String username) {
-        if (username == null | userRepository.findByUsername(username).isEmpty()) {
-            throw new InvalidParametrException();
-        }
-        User getUser = userRepository.findByUsername(username).get();
+    public ResponseEntity<User> getUser(@ApiParam(value = "The name that needs to be fetched", example = "username")
+                                        @PathVariable("username") String username) {
+        userService.validateUserName(username);
 
-        return ResponseEntity.ok(getUser);
+        return ResponseEntity.ok(userRepository.findByUsername(username).get());
     }
 
     @ApiResponses(value = {
@@ -68,14 +67,12 @@ public class UserController {
     @ApiOperation(value = "User change", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PutMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<User> updateUser(@ApiParam(value = "The name that needs to be fetched", example = "test1")
+    public void updateUser(@ApiParam(value = "The name that needs to be fetched", example = "test1")
                                            @PathVariable("username") String username,
                                            @ApiParam(value = "Modified user object", example = "userDTO")
                                            @Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
-        if (username == null | userRepository.findByUsername(username).isEmpty()) {
-            throw new NotFoundException();
-        }
         validator.validate(bindingResult);
+        userService.validateUserName(username);
 
         User user = userRepository.findByUsername(username).get();
         List<Role> roleList = user.getRoleList();
@@ -89,8 +86,7 @@ public class UserController {
         updateUser.setStatus(user.getStatus());
 
         log.info("User {} changed successfully", username);
-
-        return ResponseEntity.ok(userRepository.save(updateUser));
+        userRepository.save(updateUser);
     }
 
     @ApiResponses(value = {
@@ -102,16 +98,11 @@ public class UserController {
             authorizations = {@Authorization(value = "apiKey")})
     @DeleteMapping(value = "/{id}")
     public void deleteUser(@ApiParam(value = "This ID is required to search for a user under this ID", example = "1")
-                              @PathVariable("id") long id) {
-        if (id < 1 | userRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
+                           @PathVariable("id") long id) {
+        userService.validateUserId(id);
+
         User user = userRepository.getById(id);
         user.setStatus(Status.DELETED);
         userRepository.save(user);
     }
-
-
-
-
 }
