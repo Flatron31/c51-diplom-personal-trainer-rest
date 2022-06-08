@@ -4,10 +4,10 @@ import com.example.c51diplompersonaltrainerrest.mapper.ShopMapper;
 import com.example.c51diplompersonaltrainerrest.dto.ShopDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Shop;
 import com.example.c51diplompersonaltrainerrest.entity.SportsNutrition;
-import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ShopRepository;
 import com.example.c51diplompersonaltrainerrest.repository.SportsNutritionRepository;
+import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,15 +28,19 @@ import java.util.List;
 @RequestMapping("/api/user/shop")
 public class ShopController {
 
-    private ShopRepository shopRepository;
-    private SportsNutritionRepository sportsNutritionRepository;
-    private ShopMapper shopMapper;
+    private final ShopRepository shopRepository;
+    private final SportsNutritionRepository sportsNutritionRepository;
+    private final ShopMapper shopMapper;
+    private final Validator validator;
 
-    public ShopController(ShopRepository shopRepository, SportsNutritionRepository sportsNutritionRepository,
-                          ShopMapper shopMapper) {
+    public ShopController(ShopRepository shopRepository,
+                          SportsNutritionRepository sportsNutritionRepository,
+                          ShopMapper shopMapper,
+                          Validator validator) {
         this.shopRepository = shopRepository;
         this.sportsNutritionRepository = sportsNutritionRepository;
         this.shopMapper = shopMapper;
+        this.validator = validator;
     }
 
     @ApiResponses(value = {
@@ -49,10 +53,8 @@ public class ShopController {
     @PostMapping()
     public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.info("New exercise not added");
-            throw new InvalidParametrException();
-        }
+        validator.validate(bindingResult);
+
         Shop shop = shopMapper.shopDTOToShop(shopDTO);
         Shop saveShop = shopRepository.save(shop);
 
@@ -131,9 +133,9 @@ public class ShopController {
         if (id < 1 | shopRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
         }
-        if (bindingResult.hasErrors()) {
-            throw new InvalidParametrException();
-        }
+        validator.validate(bindingResult);
+
+
         Shop shop = shopRepository.getById(id);
         List<SportsNutrition> sportsNutritionList = shop.getSportsNutritionList();
 
