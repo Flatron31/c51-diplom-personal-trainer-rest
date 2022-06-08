@@ -9,6 +9,7 @@ import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrExcepti
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ShopRepository;
 import com.example.c51diplompersonaltrainerrest.repository.SportsNutritionRepository;
+import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,16 +30,19 @@ import java.util.List;
 @RequestMapping("/api/user/sports-nutrition")
 public class SportsNutritionController {
 
-    private SportsNutritionRepository sportsNutritionRepository;
-    private SportsNutritionMapper sportsNutritionMapper;
-    private ShopRepository shopRepository;
+    private final SportsNutritionRepository sportsNutritionRepository;
+    private final SportsNutritionMapper sportsNutritionMapper;
+    private final ShopRepository shopRepository;
+    private final Validator validator;
 
     public SportsNutritionController(SportsNutritionRepository sportsNutritionRepository,
                                      SportsNutritionMapper sportsNutritionMapper,
-                                     ShopRepository shopRepository) {
+                                     ShopRepository shopRepository,
+                                     Validator validator) {
         this.sportsNutritionRepository = sportsNutritionRepository;
         this.sportsNutritionMapper = sportsNutritionMapper;
         this.shopRepository = shopRepository;
+        this.validator = validator;
     }
 
     @ApiResponses(value = {
@@ -53,10 +57,8 @@ public class SportsNutritionController {
             example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.error("New sportsNutrition not added");
-            throw new InvalidParametrException();
-        }
+       validator.validate(bindingResult);
+
         SportsNutrition sportsNutrition = sportsNutritionMapper.SportsNutritionDTOToSportsNutrition(sportsNutritionDTO);
 
         log.info("New sportsNutrition {} added", sportsNutritionDTO.getName());
@@ -94,15 +96,14 @@ public class SportsNutritionController {
             "obtain a sports nutrition object by this identifier for subsequent changes", example = "1")
                                                                  @PathVariable("id") Long id,
                                                                  @ApiParam(value = "Changing the object of sports nutrition",
-                                                                         example = "sportsNutritionDTO")
+                                                                 example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
         if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
             throw new NotFoundException();
         }
-        if (bindingResult.hasErrors()) {
-            throw new InvalidParametrException();
-        }
+       validator.validate(bindingResult);
+
         SportsNutrition sportsNutrition = sportsNutritionRepository.getById(id);
         List<Shop> shopList = sportsNutrition.getShopList();
 
