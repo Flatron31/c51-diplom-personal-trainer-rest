@@ -3,8 +3,8 @@ package com.example.c51diplompersonaltrainerrest.controller;
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
 import com.example.c51diplompersonaltrainerrest.mapper.ExerciseMapper;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;
-import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ExerciseRepository;
+import com.example.c51diplompersonaltrainerrest.service.ExerciseService;
 import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,13 +29,16 @@ public class ExerciseController {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseMapper exerciseMapper;
     private final Validator validator;
+    private final ExerciseService exerciseService;
 
     public ExerciseController(ExerciseRepository exerciseRepository,
                               ExerciseMapper exerciseMapper,
-                              Validator validator) {
+                              Validator validator,
+                              ExerciseService exerciseService) {
         this.exerciseRepository = exerciseRepository;
         this.exerciseMapper = exerciseMapper;
         this.validator = validator;
+        this.exerciseService = exerciseService;
     }
 
     @ApiResponses(value = {
@@ -46,20 +49,12 @@ public class ExerciseController {
     @ApiOperation(value = "Creating a new exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public ResponseEntity<Exercise> createExercize(@ApiParam(value = "New object exercise", example = "exerciseDTO")
-                                                   @Valid @RequestBody ExerciseDTO exerciseDTO,
-                                                   BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            log.info("New exercise not added");
-//            throw new InvalidParametrException();
-//        }
+    public void createExercise(@ApiParam(value = "New object exercise", example = "exerciseDTO")
+                               @Valid @RequestBody ExerciseDTO exerciseDTO,
+                               BindingResult bindingResult) {
         validator.validate(bindingResult);
 
-        Exercise exercise = exerciseMapper.exerciseDTOToExercise(exerciseDTO);
-
-        log.info("New exercise {} added", exerciseDTO.getName());
-
-        return ResponseEntity.ok(exerciseRepository.save(exercise));
+        exerciseService.createExercise(exerciseDTO);
     }
 
     @ApiResponses(value = {
@@ -73,28 +68,9 @@ public class ExerciseController {
     public ResponseEntity<Exercise> getExercise(@ApiParam(value = "This id is required to get the exercise under the given id",
             example = "1")
                                                 @PathVariable("id") Long id) {
-        if (id < 0 | exerciseRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        Exercise exercise = exerciseRepository.getById(id);
+        validator.validateExerciseId(id);
 
-        return ResponseEntity.ok(exercise);
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not found")
-    })
-    @ApiOperation(value = "Removal exercise", notes = "This can only be done by the logged in user",
-            authorizations = {@Authorization(value = "apiKey")})
-    @DeleteMapping(value = "/{id}", produces = "application/json")
-    public void deleteComment(@ApiParam(value = "Id is required to receive a comment on this id", example = "1")
-                              @PathVariable("id") Long id) {
-        if (id < 1 | exerciseRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        exerciseRepository.delete(exerciseRepository.getById(id));
+        return ResponseEntity.ok(exerciseRepository.getById(id));
     }
 
     @ApiResponses(value = {
@@ -106,20 +82,17 @@ public class ExerciseController {
     @ApiOperation(value = "Updated exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PutMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<Exercise> updateComment(@ApiParam(value = "The identifier is required to get the exercise " +
+    public void updateExercise(@ApiParam(value = "The identifier is required to get the exercise " +
             "for this id for subsequent changes", example = "1")
-                                                  @PathVariable("id") Long id,
-                                                  @ApiParam(value = "Creating a modified Exercise object",
-                                                          example = "exercise")
-                                                  @Valid @RequestBody Exercise exercise, BindingResult bindingResult) {
-        if (id < 1 | exerciseRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
+                               @PathVariable("id") Long id,
+                               @ApiParam(value = "Creating a modified exercise object",
+                                       example = "exercise")
+                               @Valid @RequestBody Exercise exercise, BindingResult bindingResult) {
+        validator.validateExerciseId(id);
         validator.validate(bindingResult);
 
         exercise.setId(id);
-
-        return ResponseEntity.ok(exerciseRepository.save(exercise));
+        exerciseRepository.save(exercise);
     }
 
     @ApiResponses(value = {
@@ -133,6 +106,21 @@ public class ExerciseController {
         List<Exercise> exerciseList = exerciseRepository.findAll();
 
         return ResponseEntity.ok(exerciseList);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Removal exercise", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public void deleteExercise(@ApiParam(value = "Id is required to receive a comment on this id", example = "1")
+                               @PathVariable("id") Long id) {
+        validator.validateExerciseId(id);
+
+        exerciseRepository.delete(exerciseRepository.getById(id));
     }
 }
 
