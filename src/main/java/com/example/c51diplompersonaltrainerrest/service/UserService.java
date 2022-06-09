@@ -5,6 +5,8 @@ import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Role;
 import com.example.c51diplompersonaltrainerrest.entity.Status;
 import com.example.c51diplompersonaltrainerrest.entity.User;
+import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
+import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.RoleRepository;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +50,22 @@ public class UserService {
     public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+    public void validateUserName(String username) {
+        if (username == null | userRepository.findByUsername(username).isEmpty()) {
+            throw new NotFoundException();
+        }
+    }
+
+    public void validateUserId(long id) {
+        if (id < 1 | userRepository.findById(id).isEmpty()) {
+            throw new InvalidParametrException();
+        }
+    }
+
+    public void updateUser(User user){
+
+    }
+
+
 
 }
