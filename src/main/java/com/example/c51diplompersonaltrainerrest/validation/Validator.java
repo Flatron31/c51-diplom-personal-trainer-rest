@@ -12,4 +12,5 @@ public class Validator {
             throw new InvalidParametrException();
         }
     }
+
 }
