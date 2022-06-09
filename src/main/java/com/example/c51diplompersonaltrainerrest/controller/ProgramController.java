@@ -7,6 +7,8 @@ import com.example.c51diplompersonaltrainerrest.mapper.UserMapper;
 import com.example.c51diplompersonaltrainerrest.repository.ProgramRepository;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
 import com.example.c51diplompersonaltrainerrest.service.ProgramService;
+import com.example.c51diplompersonaltrainerrest.service.UserService;
+import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,19 +27,22 @@ import java.util.List;
 @RequestMapping("/api/user/program")
 public class ProgramController {
 
-    private UserMapper userMapper;
-    private UserRepository userRepository;
-    private ProgramService programService;
-    private ProgramRepository programRepository;
+    private final UserRepository userRepository;
+    private final ProgramService programService;
+    private final ProgramRepository programRepository;
+    private final Validator validator;
+    private final UserService userService;
 
-    public ProgramController(UserMapper userMapper,
+    public ProgramController(Validator validator,
                              UserRepository userRepository,
                              ProgramService programService,
-                             ProgramRepository programRepository) {
-        this.userMapper = userMapper;
+                             ProgramRepository programRepository,
+                             UserService userService) {
+        this.validator = validator;
         this.userRepository = userRepository;
         this.programService = programService;
         this.programRepository = programRepository;
+        this.userService = userService;
     }
 
     @ApiResponses(value = {
@@ -48,24 +53,18 @@ public class ProgramController {
     @ApiOperation(value = "Creating a program for the user under the given id",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping("/{id}")
-    public ResponseEntity<Program> createProgramForUser(@ApiParam(value = "This id is required to search for " +
+    public void createProgramForUser(@ApiParam(value = "This id is required to search for " +
             "a user under this id", example = "1")
                                                         @PathVariable("id") long id) {
-        if (id < 1 | userRepository.findById(id).isEmpty()) {
-            log.error("New program not added");
-            throw new NotFoundException();
-        }
+        userService.validateUserId(id);
+
         User user = userRepository.getById(id);
         List<Program> programList = user.getProgramList();
         Program program = programService.createProgram(user);
         programList.add(program);
         user.setProgramList(programList);
-
-        Program save = programRepository.save(program);
-
+        programRepository.save(program);
         log.info("New program added {}", user.getUsername());
-
-        return ResponseEntity.ok(save);
     }
 
     @ApiResponses(value = {
@@ -78,13 +77,11 @@ public class ProgramController {
     public ResponseEntity<List<Program>> getAllProgramUser(@ApiParam(value = "This ID is required to search for" +
             " a user under this ID", example = "1")
                                                            @PathVariable("id") long id) {
-        if (id < 1 | userRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        User user = userRepository.getById(id);
-        List<Program> allProgramsUser = programRepository.findAllByUser(user);
+        userService.validateUserId(id);
 
-        return ResponseEntity.ok(allProgramsUser);
+        User user = userRepository.getById(id);
+
+        return ResponseEntity.ok(programRepository.findAllByUser(user));
     }
 
     @ApiResponses(value = {
@@ -98,9 +95,8 @@ public class ProgramController {
     public void deleteProgram(@ApiParam(value = "This id is required to search for " +
             "a user under this id", example = "1")
                               @PathVariable("id") long id) {
-        if (id < 1 | programRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
+        userService.validateUserId(id);
+
         Program program = programRepository.getById(id);
         programRepository.delete(program);
     }

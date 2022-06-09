@@ -29,16 +29,13 @@ import java.util.List;
 public class ShopController {
 
     private final ShopRepository shopRepository;
-    private final SportsNutritionRepository sportsNutritionRepository;
     private final ShopMapper shopMapper;
     private final Validator validator;
 
     public ShopController(ShopRepository shopRepository,
-                          SportsNutritionRepository sportsNutritionRepository,
                           ShopMapper shopMapper,
                           Validator validator) {
         this.shopRepository = shopRepository;
-        this.sportsNutritionRepository = sportsNutritionRepository;
         this.shopMapper = shopMapper;
         this.validator = validator;
     }
@@ -51,16 +48,14 @@ public class ShopController {
     @ApiOperation(value = "Creating a new shop", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", example = "shopDTO")
+    public void createShop(@ApiParam(value = "New object shop", example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO, BindingResult bindingResult) {
         validator.validate(bindingResult);
 
         Shop shop = shopMapper.shopDTOToShop(shopDTO);
-        Shop saveShop = shopRepository.save(shop);
+        shopRepository.save(shop);
 
         log.info("New shop {} added", shopDTO.getName());
-
-        return ResponseEntity.ok(saveShop);
     }
 
     @ApiResponses(value = {
@@ -88,30 +83,11 @@ public class ShopController {
     public ResponseEntity<Shop> getShop(@ApiParam(value = "This id is required to get the store object " +
             "under the given id", example = "1")
                                         @PathVariable("id") Long id) {
-        if (id < 0 | shopRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
+        validator.validateShopId(id);
+
         Shop shop = shopRepository.getById(id);
 
         return ResponseEntity.ok(shop);
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not found")
-    })
-    @ApiOperation(value = "Getting a store object by id",
-            notes = "This can only be done by the logged in user", authorizations = {@Authorization(value = "apiKey")})
-    @DeleteMapping(value = "/{id}", produces = "application/json")
-    public void deleteShop(@ApiParam(value = "This id is required to get the store object " +
-            "under the given id", example = "1")
-                           @PathVariable("id") Long id) {
-        if (id < 0 | shopRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        Shop shop = shopRepository.getById(id);
-        shopRepository.delete(shop);
     }
 
     @ApiResponses(value = {
@@ -130,11 +106,8 @@ public class ShopController {
                                                    example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO,
                                            BindingResult bindingResult) {
-        if (id < 1 | shopRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
         validator.validate(bindingResult);
-
+        validator.validateShopId(id);
 
         Shop shop = shopRepository.getById(id);
         List<SportsNutrition> sportsNutritionList = shop.getSportsNutritionList();
@@ -144,6 +117,23 @@ public class ShopController {
         updateShop.setSportsNutritionList(sportsNutritionList);
 
         return ResponseEntity.ok(shopRepository.save(updateShop));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Getting a store object by id",
+            notes = "This can only be done by the logged in user", authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public void deleteShop(@ApiParam(value = "This id is required to get the store object " +
+            "under the given id", example = "1")
+                           @PathVariable("id") Long id) {
+        validator.validateShopId(id);
+
+        Shop shop = shopRepository.getById(id);
+        shopRepository.delete(shop);
     }
 
 }

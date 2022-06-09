@@ -53,34 +53,16 @@ public class SportsNutritionController {
     @ApiOperation(value = "Creation of a new sports nutrition facility", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public ResponseEntity<SportsNutrition> createSportsNutrition(@ApiParam(value = "New sports nutrition facility",
+    public void createSportsNutrition(@ApiParam(value = "New sports nutrition facility",
             example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
        validator.validate(bindingResult);
 
         SportsNutrition sportsNutrition = sportsNutritionMapper.SportsNutritionDTOToSportsNutrition(sportsNutritionDTO);
+        sportsNutritionRepository.save(sportsNutrition);
 
         log.info("New sportsNutrition {} added", sportsNutritionDTO.getName());
-
-        return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not found")
-    })
-    @ApiOperation(value = "Removal of sports nutrition", notes = "This can only be done by the logged in user",
-            authorizations = {@Authorization(value = "apiKey")})
-    @DeleteMapping(value = "/{id}", produces = "application/json")
-    public void deleteSportsNutrition(@ApiParam(value = "The identifier is required to obtain a sports nutrition" +
-            " object by this identifier", example = "1")
-                                      @PathVariable("id") Long id) {
-        if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        sportsNutritionRepository.delete(sportsNutritionRepository.getById(id));
     }
 
     @ApiResponses(value = {
@@ -99,9 +81,7 @@ public class SportsNutritionController {
                                                                  example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
-        if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
+       validator.validateSportsNutritionId(id);
        validator.validate(bindingResult);
 
         SportsNutrition sportsNutrition = sportsNutritionRepository.getById(id);
@@ -125,12 +105,9 @@ public class SportsNutritionController {
     public ResponseEntity<SportsNutrition> getSportsNutrition(@ApiParam(value = "The identifier is required to obtain a " +
             "sports nutrition object by this identifier", example = "1")
                                                               @PathVariable("id") Long id) {
-        if (id < 0 | sportsNutritionRepository.findById(id).isEmpty()) {
-            throw new NotFoundException();
-        }
-        SportsNutrition sportsNutrition = sportsNutritionRepository.getById(id);
+        validator.validateSportsNutritionId(id);
 
-        return ResponseEntity.ok(sportsNutrition);
+        return ResponseEntity.ok(sportsNutritionRepository.getById(id));
     }
 
     @ApiResponses(value = {
@@ -147,15 +124,12 @@ public class SportsNutritionController {
                                                                 @PathVariable("id") Long id,
                                                                 @ApiParam(value = "List of ID stores", example = "[1,2]")
                                                                 @RequestBody ListShopsDTO listShopsDTO) {
-        if (id < 1 | sportsNutritionRepository.findById(id).isEmpty()) {
-            throw new InvalidParametrException();
-        }
+        validator.validateSportsNutritionId(id);
+
         List<Long> idShops = listShopsDTO.getIdShops();
 
         for (Long idShop : idShops) {
-            if (idShop < 1 | shopRepository.findById(idShop).isEmpty()) {
-                throw new InvalidParametrException();
-            }
+            validator.validateShopId(idShop);
         }
         SportsNutrition sportsNutrition = sportsNutritionRepository.getById(id);
         List<Shop> shopList = sportsNutrition.getShopList();
@@ -167,5 +141,21 @@ public class SportsNutritionController {
         sportsNutrition.setShopList(shopList);
 
         return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    @ApiOperation(value = "Removal of sports nutrition", notes = "This can only be done by the logged in user",
+            authorizations = {@Authorization(value = "apiKey")})
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public void deleteSportsNutrition(@ApiParam(value = "The identifier is required to obtain a sports nutrition" +
+            " object by this identifier", example = "1")
+                                      @PathVariable("id") Long id) {
+        validator.validateSportsNutritionId(id);
+
+        sportsNutritionRepository.delete(sportsNutritionRepository.getById(id));
     }
 }
