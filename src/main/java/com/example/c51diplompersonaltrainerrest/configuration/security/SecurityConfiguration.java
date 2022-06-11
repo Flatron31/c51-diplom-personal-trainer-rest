@@ -2,41 +2,44 @@ package com.example.c51diplompersonaltrainerrest.configuration.security;
 
 import com.example.c51diplompersonaltrainerrest.configuration.security.Jwt.JwtConfig;
 import com.example.c51diplompersonaltrainerrest.configuration.security.Jwt.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
+@PropertySource("classpath:securityEndpoint.properties")
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true)
+//        Свойство prePostEnabled включает аннотации Spring Security до/после.
+//        Свойство secureEnabled определяет, следует ли включить аннотацию @Secured .
+//        Свойство jsr250Enabled позволяет нам использовать аннотацию @RoleAllowed .
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private static final String ADMIN_ENDPOINT = "/api/admin/**";
-    private static final String USER_ENDPOINT = "/api/user/**";
-    private static final String LOGIN_ENDPOINT = "/api/v1/auth/**";
-    private static final String[] PUBLIC_URLS = {
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/swagger-ui/",
-            "/swagger-ui",
-            "/webjars/**",
-            "/v3/api-docs/**",
-            "configuration/**",
-            "webjars/**",
-            "/*.html",
-            "/**/*.html",
-            "/**/*.css",
-            "/**/*.js",
 
-    };
+    @Value("${ADMIN_ENDPOINT}")
+    private String ADMIN_ENDPOINT;
+
+    @Value("${USER_ENDPOINT}")
+    private String USER_ENDPOINT;
+
+    @Value("${LOGIN_ENDPOINT}")
+    private String LOGIN_ENDPOINT;
+
+    @Value("${DB_H2_ENDPOINT}")
+    private String DB_H2_ENDPOINT;
+
+    @Value("${PUBLIC_URLS}")
+    private String[] PUBLIC_URLS;
 
     public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -56,10 +59,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasAuthority("ADMIN")
-                .antMatchers(USER_ENDPOINT).hasAuthority("USER")
+//                .antMatchers(ADMIN_ENDPOINT).hasAuthority("ADMIN")
+//                .antMatchers(USER_ENDPOINT).hasAuthority("USER")
                 .antMatchers(HttpMethod.GET, PUBLIC_URLS).permitAll()
-                .antMatchers("/db/**").permitAll()
+                .antMatchers(DB_H2_ENDPOINT).permitAll()
+//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfig(jwtTokenProvider));
