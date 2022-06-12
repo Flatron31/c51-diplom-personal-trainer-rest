@@ -20,10 +20,11 @@ public class ExerciseService {
         this.exerciseMapper = exerciseMapper;
     }
 
-    public void createExercise(ExerciseDTO exerciseDTO){
+    public Exercise createExercise(ExerciseDTO exerciseDTO){
         Exercise exercise = exerciseMapper.exerciseDTOToExercise(exerciseDTO);
         log.info("New exercise {} added", exerciseDTO.getName());
         exerciseRepository.save(exercise);
+        return exercise;
     }
 
 }

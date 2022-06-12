@@ -1,7 +1,6 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
-import com.example.c51diplompersonaltrainerrest.mapper.ExerciseMapper;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;
 import com.example.c51diplompersonaltrainerrest.repository.ExerciseRepository;
 import com.example.c51diplompersonaltrainerrest.service.ExerciseService;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,24 +22,23 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@PreAuthorize("hasRole('USER')")
 @Api(tags = "Exercise", description = "Operations with the exercise object")
 @RequestMapping("/api/user/exercise")
 public class ExerciseController {
 
     private final ExerciseRepository exerciseRepository;
-    private final ExerciseMapper exerciseMapper;
     private final Validator validator;
     private final ExerciseService exerciseService;
 
     public ExerciseController(ExerciseRepository exerciseRepository,
-                              ExerciseMapper exerciseMapper,
                               Validator validator,
                               ExerciseService exerciseService) {
         this.exerciseRepository = exerciseRepository;
-        this.exerciseMapper = exerciseMapper;
         this.validator = validator;
         this.exerciseService = exerciseService;
     }
+
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -49,12 +48,12 @@ public class ExerciseController {
     @ApiOperation(value = "Creating a new exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public void createExercise(@ApiParam(value = "New object exercise", example = "exerciseDTO")
+    public ResponseEntity<Exercise> createExercise(@ApiParam(value = "New object exercise", example = "exerciseDTO")
                                @Valid @RequestBody ExerciseDTO exerciseDTO,
                                BindingResult bindingResult) {
         validator.validate(bindingResult);
 
-        exerciseService.createExercise(exerciseDTO);
+        return ResponseEntity.ok(exerciseService.createExercise(exerciseDTO));
     }
 
     @ApiResponses(value = {
