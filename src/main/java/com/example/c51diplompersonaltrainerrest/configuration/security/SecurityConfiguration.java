@@ -8,17 +8,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @PropertySource("classpath:securityEndpoint.properties")
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = true,
-        jsr250Enabled = true)
+//@EnableGlobalMethodSecurity(
+//        prePostEnabled = true,
+//        securedEnabled = true,
+//        jsr250Enabled = true)
 //        Свойство prePostEnabled включает аннотации Spring Security до/после.
 //        Свойство secureEnabled определяет, следует ли включить аннотацию @Secured .
 //        Свойство jsr250Enabled позволяет нам использовать аннотацию @RoleAllowed .
@@ -41,6 +40,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${PUBLIC_URLS}")
     private String[] PUBLIC_URLS;
 
+    @Value("${ADMIN_ROLE_NAME}")
+    private String ADMIN_ROLE_NAME;
+
+    @Value("${USER_ROLE_NAME}")
+    private String USER_ROLE_NAME;
+
     public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -59,11 +64,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
-//                .antMatchers(ADMIN_ENDPOINT).hasAuthority("ADMIN")
-//                .antMatchers(USER_ENDPOINT).hasAuthority("USER")
+                .antMatchers(ADMIN_ENDPOINT).hasAuthority("ADMIN_ROLE_NAME")
+                .antMatchers(USER_ENDPOINT).hasAuthority("USER_ROLE_NAME")
                 .antMatchers(HttpMethod.GET, PUBLIC_URLS).permitAll()
                 .antMatchers(DB_H2_ENDPOINT).permitAll()
-//                .antMatchers("/**").permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfig(jwtTokenProvider));
