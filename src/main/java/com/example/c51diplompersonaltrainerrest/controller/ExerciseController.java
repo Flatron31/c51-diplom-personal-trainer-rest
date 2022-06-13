@@ -38,7 +38,7 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -76,7 +76,7 @@ public class ExerciseController {
     }
 
 
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
