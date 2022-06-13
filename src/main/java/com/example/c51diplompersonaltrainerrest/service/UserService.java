@@ -28,7 +28,7 @@ public class UserService {
         User user = UserConverter.convertToUserFromUserSignupDTO(userDTO);
         List<Role> roles = new ArrayList<>();
         Role role = new Role();
-        role.setName("USER");
+        role.setName("ROLE_USER");
         roles.add(role);
         user.setRoleList(roles);
         user.setStatus(Status.ACTIVE);
