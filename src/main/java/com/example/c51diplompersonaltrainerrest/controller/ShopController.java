@@ -4,9 +4,7 @@ import com.example.c51diplompersonaltrainerrest.mapper.ShopMapper;
 import com.example.c51diplompersonaltrainerrest.dto.ShopDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Shop;
 import com.example.c51diplompersonaltrainerrest.entity.SportsNutrition;
-import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
 import com.example.c51diplompersonaltrainerrest.repository.ShopRepository;
-import com.example.c51diplompersonaltrainerrest.repository.SportsNutritionRepository;
 import com.example.c51diplompersonaltrainerrest.validation.Validator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +39,8 @@ public class ShopController {
         this.validator = validator;
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -48,16 +49,19 @@ public class ShopController {
     @ApiOperation(value = "Creating a new shop", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public void createShop(@ApiParam(value = "New object shop", example = "shopDTO")
+    public ResponseEntity<Shop> createShop(@ApiParam(value = "New object shop", example = "shopDTO")
                                            @Valid @RequestBody ShopDTO shopDTO, BindingResult bindingResult) {
         validator.validate(bindingResult);
 
         Shop shop = shopMapper.shopDTOToShop(shopDTO);
-        shopRepository.save(shop);
 
         log.info("New shop {} added", shopDTO.getName());
+
+        return ResponseEntity.ok(shopRepository.save(shop));
     }
 
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -72,6 +76,8 @@ public class ShopController {
         return ResponseEntity.ok(shopList);
     }
 
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -90,6 +96,8 @@ public class ShopController {
         return ResponseEntity.ok(shop);
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -119,6 +127,9 @@ public class ShopController {
         return ResponseEntity.ok(shopRepository.save(updateShop));
     }
 
+
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
