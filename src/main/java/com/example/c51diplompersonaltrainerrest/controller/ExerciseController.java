@@ -22,7 +22,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@PreAuthorize("hasRole('USER')")
 @Api(tags = "Exercise", description = "Operations with the exercise object")
 @RequestMapping("/api/user/exercise")
 public class ExerciseController {
@@ -39,7 +38,8 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
-
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -56,6 +56,9 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.createExercise(exerciseDTO));
     }
 
+
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -72,6 +75,9 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseRepository.getById(id));
     }
 
+
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -94,6 +100,8 @@ public class ExerciseController {
         exerciseRepository.save(exercise);
     }
 
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -107,6 +115,8 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseList);
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
