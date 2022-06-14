@@ -1,10 +1,7 @@
 package com.example.c51diplompersonaltrainerrest.controller;
 
 import com.example.c51diplompersonaltrainerrest.entity.Status;
-import com.example.c51diplompersonaltrainerrest.mapper.UserMapper;
 import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
-import com.example.c51diplompersonaltrainerrest.entity.Program;
-import com.example.c51diplompersonaltrainerrest.entity.Role;
 import com.example.c51diplompersonaltrainerrest.entity.User;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
 import com.example.c51diplompersonaltrainerrest.service.UserService;
@@ -15,31 +12,27 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
-@Slf4j
+@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 @RestController
 @Api(tags = "User", description = "Operations with the user")
 @RequestMapping("/api/user")
 public class UserController {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final Validator validator;
     private final UserService userService;
 
     public UserController(UserRepository userRepository,
-                          UserMapper userMapper,
                           Validator validator,
                           UserService userService) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.validator = validator;
         this.userService = userService;
     }
@@ -67,26 +60,16 @@ public class UserController {
     @ApiOperation(value = "User change", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PutMapping(value = "/{username}", produces = "application/json")
-    public void updateUser(@ApiParam(value = "The name that needs to be fetched", example = "test1")
+    public ResponseEntity<User> updateUser(@ApiParam(value = "The name that needs to be fetched", example = "test1")
                                            @PathVariable("username") String username,
                                            @ApiParam(value = "Modified user object", example = "userDTO")
                                            @Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         validator.validate(bindingResult);
         userService.validateUserName(username);
 
-        User user = userRepository.findByUsername(username).get();
-        List<Role> roleList = user.getRoleList();
-        List<Program> programList = user.getProgramList();
+        User updateUser = userService.updateUser(username, userDTO);
 
-        User updateUser = userMapper.userDTOToUser(userDTO);
-        updateUser.setId(user.getId());
-        updateUser.setUsername(username);
-        updateUser.setRoleList(roleList);
-        updateUser.setProgramList(programList);
-        updateUser.setStatus(user.getStatus());
-
-        log.info("User {} changed successfully", username);
-        userRepository.save(updateUser);
+        return ResponseEntity.ok(updateUser);
     }
 
     @ApiResponses(value = {
