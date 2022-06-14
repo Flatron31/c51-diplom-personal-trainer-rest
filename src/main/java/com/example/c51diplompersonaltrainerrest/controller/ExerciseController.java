@@ -87,7 +87,7 @@ public class ExerciseController {
     @ApiOperation(value = "Updated exercise", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PutMapping(value = "/{id}", produces = "application/json")
-    public void updateExercise(@ApiParam(value = "The identifier is required to get the exercise " +
+    public ResponseEntity<Exercise> updateExercise(@ApiParam(value = "The identifier is required to get the exercise " +
             "for this id for subsequent changes", example = "1")
                                @PathVariable("id") Long id,
                                @ApiParam(value = "Creating a modified exercise object",
@@ -97,7 +97,9 @@ public class ExerciseController {
         validator.validate(bindingResult);
 
         exercise.setId(id);
-        exerciseRepository.save(exercise);
+
+        return ResponseEntity.ok(exerciseRepository.save(exercise));
+
     }
 
 //    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
