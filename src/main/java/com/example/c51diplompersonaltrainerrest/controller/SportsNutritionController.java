@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,26 +46,31 @@ public class SportsNutritionController {
         this.validator = validator;
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "405", description = "Invalid input")
     })
-    @ApiOperation(value = "Creation of a new sports nutrition facility", notes = "This can only be done by the logged in user",
+    @ApiOperation(value = "Creation of a new sports nutrition", notes = "This can only be done by the logged in user",
             authorizations = {@Authorization(value = "apiKey")})
     @PostMapping()
-    public void createSportsNutrition(@ApiParam(value = "New sports nutrition facility",
+    public ResponseEntity<SportsNutrition> createSportsNutrition(@ApiParam(value = "New sports nutrition facility",
             example = "sportsNutritionDTO")
                                                                  @Valid @RequestBody SportsNutritionDTO sportsNutritionDTO,
                                                                  BindingResult bindingResult) {
        validator.validate(bindingResult);
 
         SportsNutrition sportsNutrition = sportsNutritionMapper.SportsNutritionDTOToSportsNutrition(sportsNutritionDTO);
-        sportsNutritionRepository.save(sportsNutrition);
 
         log.info("New sportsNutrition {} added", sportsNutritionDTO.getName());
+
+        return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
     }
 
+    //    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -94,6 +100,7 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutritionRepository.save(updateSportsNutrition));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -110,6 +117,9 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutritionRepository.getById(id));
     }
 
+
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -143,6 +153,8 @@ public class SportsNutritionController {
         return ResponseEntity.ok(sportsNutritionRepository.save(sportsNutrition));
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
