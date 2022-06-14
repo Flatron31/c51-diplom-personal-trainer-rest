@@ -2,27 +2,36 @@ package com.example.c51diplompersonaltrainerrest.service;
 
 import com.example.c51diplompersonaltrainerrest.converter.UserConverter;
 import com.example.c51diplompersonaltrainerrest.dto.UserDTO;
+import com.example.c51diplompersonaltrainerrest.entity.Program;
 import com.example.c51diplompersonaltrainerrest.entity.Role;
 import com.example.c51diplompersonaltrainerrest.entity.Status;
 import com.example.c51diplompersonaltrainerrest.entity.User;
 import com.example.c51diplompersonaltrainerrest.exception.InvalidParametrException;
 import com.example.c51diplompersonaltrainerrest.exception.NotFoundException;
+import com.example.c51diplompersonaltrainerrest.mapper.UserMapper;
 import com.example.c51diplompersonaltrainerrest.repository.RoleRepository;
 import com.example.c51diplompersonaltrainerrest.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.userMapper = userMapper;
+    }
 
     public void registration(UserDTO userDTO) {
         User user = UserConverter.convertToUserFromUserSignupDTO(userDTO);
@@ -50,6 +59,7 @@ public class UserService {
     public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
     public void validateUserName(String username) {
         if (username == null | userRepository.findByUsername(username).isEmpty()) {
             throw new NotFoundException();
@@ -62,10 +72,21 @@ public class UserService {
         }
     }
 
-    public void updateUser(User user){
+    public User updateUser(String username, UserDTO userDTO) {
+        User user = userRepository.findByUsername(username).get();
+        List<Role> roleList = user.getRoleList();
+        List<Program> programList = user.getProgramList();
 
+        User updateUser = userMapper.userDTOToUser(userDTO);
+        updateUser.setId(user.getId());
+        updateUser.setUsername(username);
+        updateUser.setRoleList(roleList);
+        updateUser.setProgramList(programList);
+        updateUser.setStatus(user.getStatus());
+        userRepository.save(updateUser);
+
+        log.info("User {} changed successfully", username);
+
+        return updateUser;
     }
-
-
-
 }
