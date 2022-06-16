@@ -25,3 +25,5 @@ An application that allows users, depending on physical parameters and goals, to
     3. Create docker image - docker build -t personal-trainer-rest:tms .
     4. Run docker image - docker run -p 8080:8080 -d personal-trainer-rest:tms
     5. View container - docker ps
+    
+    
