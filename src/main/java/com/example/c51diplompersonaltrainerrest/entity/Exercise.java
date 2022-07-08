@@ -35,4 +35,7 @@ public class Exercise {
     @JsonIgnore
     @ManyToMany
     private List<Program> programList;
+
+    @JsonIgnore
+    private Status status;
 }

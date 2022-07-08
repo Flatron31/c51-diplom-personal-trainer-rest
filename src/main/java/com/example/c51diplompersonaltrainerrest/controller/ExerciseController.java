@@ -2,6 +2,7 @@ package com.example.c51diplompersonaltrainerrest.controller;
 
 import com.example.c51diplompersonaltrainerrest.dto.ExerciseDTO;
 import com.example.c51diplompersonaltrainerrest.entity.Exercise;
+import com.example.c51diplompersonaltrainerrest.entity.Status;
 import com.example.c51diplompersonaltrainerrest.repository.ExerciseRepository;
 import com.example.c51diplompersonaltrainerrest.service.ExerciseService;
 import com.example.c51diplompersonaltrainerrest.validation.Validator;
@@ -128,10 +129,12 @@ public class ExerciseController {
             authorizations = {@Authorization(value = "apiKey")})
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public void deleteExercise(@ApiParam(value = "Id is required to receive a comment on this id", example = "1")
-                               @PathVariable("id") Long id) {
+                               @PathVariable("id") Long id,
+                               @Valid @RequestBody Exercise exercise, BindingResult bindingResult) {
         validator.validateExerciseId(id);
-
-        exerciseRepository.delete(exerciseRepository.getById(id));
+        exercise = exerciseRepository.getById(id);
+        exercise.setStatus(Status.DELETED);
+        exerciseRepository.save(exercise);
     }
 }
 
